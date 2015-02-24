@@ -23,33 +23,44 @@ function Game () {
 		return save;
 	};
 }
-
+var root;
 Game.fromSerialized = function (string) {
-	var obj = JSON.parse (string);
+	var gameNode = parseXML (string).documentElement;
 	var game = new Game ();
-	game.name = obj.name;
-	game.author = obj.author;
-	game.description = obj.description;
-	game.startingZoneID = obj.startingZoneID;
+	game.name = gameNode.getAttribute ('name');
+	game.author = gameNode.getAttribute ('author');
+	game.description = gameNode.getAttribute ('description');
+	game.startingZoneID = gameNode.getAttribute ('startingZoneID');
 
-	for (var i = 0; i < obj.zones.length; i++) {
-		var z = obj.zones [i];
-		var zone = new Zone (z.id, z.name, createLogic (z.logicList));
+	var zonesNode = gameNode.getElementsByTagName ('Zones')[0];
+	removeTextNodes (zonesNode);
+
+	for (var i = 0; i < zonesNode.childNodes.length; i++) {
+		var z = zonesNode.childNodes [i];
+		var zone = new Zone (z.getAttribute ('id'), z.getAttribute ('name'), new LogicList ());
+		removeTextNodes (z);
+
+		for (var j = 0; j < z.childNodes.length; j++) {
+			zone.logicList.logics.push (createLogic (z.childNodes [i]));
+		}
+
 		game.zones.push (zone);
 	}
 
-	function createLogic (obj) {
-		var logic = new window [obj.type] ();
-		
-		for (var prop in obj) {
-			logic [prop] = obj [prop];
+	function createLogic (node) {
+		removeTextNodes (node);
+		var logic = new window [node.nodeName] ();
+		var attrs = node.attributes;
+
+		for (var i = 0; i < attrs.length; i++) {
+			logic [attrs [i].name] = attrs [i].value;
 		}
 
-		if (/List/.test (obj.type) || obj.type === 'LogicOption') {
+		if (/List/.test (node.nodeName) || node.nodeName === 'LogicOption') {
 			logic.logics = [];
 
-			for (var i = 0; i < obj.logics.length; i++) {
-				logic.logics.push (createLogic (obj.logics [i]));
+			for (var i = 0; i < node.childNodes.length; i++) {
+				logic.logics.push (createLogic (node.childNodes [i]));
 			}
 		}
 
@@ -58,3 +69,4 @@ Game.fromSerialized = function (string) {
 
 	return game;
 };
+
