@@ -72,3 +72,5 @@ function Zone (id, name, logicList) {
 }
 
 Zone.inherits (Entity);
+
+//should add some kind of engine action queue and a general step function

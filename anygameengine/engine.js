@@ -68,6 +68,8 @@ function ZoneEngine (game, save) {
 			doLogicOptionList.call (this, currentLogic);
 		} else if (currentLogic instanceof LogicText) {
 			doLogicText.call (this, currentLogic);
+		} else if (currentLogic instanceof LogicZoneChange) {
+			doLogicZoneChange.call (this, currentLogic);
 		}
 	};
 
@@ -79,7 +81,7 @@ function ZoneEngine (game, save) {
 		if (index < 0 || index > currentLogic.logics.length - 1) {
 			throw 'Option index out of bounds.';
 		}
-
+		
 		state = ZoneEngineState.LOGIC_ACTION;
 		this.save.remainingLogic.shift ();
 		this.save.remainingLogic.unshift.apply (this.save.remainingLogic, currentLogic.logics [index].logics);
@@ -97,12 +99,26 @@ function ZoneEngine (game, save) {
 		this.save.remainingLogic.shift ();
 		this.fireEvent (ZoneEngineEvent.LOGIC_TEXT, text.text);
 	}
+
+	function doLogicZoneChange (zoneChange) {
+		this.save.remainingLogic.shift ();
+		var zone = this.game.zones.filter (function (z) { return z.id === zoneChange.zoneID; })[0];
+		
+		this.save.remainingLogic = [];
+
+		for (var i = 0; i < zone.logicList.logics.length; i++) {
+			this.save.remainingLogic.push (zone.logicList.logics [i]);
+		}
+
+		this.fireEvent (ZoneEngineEvent.LOGIC_ZONE_CHANGE, zone.name);
+	}
 }
 
 var ZoneEngineEvent = new Enum (
 	'LOGIC_TEXT',
 	'LOGIC_OPTION_LIST',
-	'LOGIC_OPTION'
+	'LOGIC_OPTION',
+	'LOGIC_ZONE_CHANGE'
 );
 
 ZoneEngine.inherits (Engine);

@@ -14,12 +14,12 @@ function Game () {
 	this.getFreshSave = function () {
 		var save = new Save ();
 		save.startingZoneID = this.startingZoneID;
-		var zone = this.zones.filter (function (z) { ;return z.id === this.startingZoneID; }, this)[0];
+		var zone = this.zones.filter (function (z) { return z.id === this.startingZoneID; }, this)[0];
 		
 		for (var i = 0; i < zone.logicList.logics.length; i++) {
 			save.remainingLogic.push (zone.logicList.logics [i]);
 		}
-
+		
 		return save;
 	};
 }
