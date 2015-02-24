@@ -28,7 +28,9 @@ if (typeof window.DOMParser != "undefined") {
 
 function removeTextNodes (node) {
 	for (var i = 0; i < node.childNodes.length; i++) {
-		if (node.childNodes [i].nodeType == 3) {
+        var badNodeTypes = [3, 8];
+
+		if (badNodeTypes.indexOf (node.childNodes [i].nodeType) !== -1) {
 			node.removeChild (node.childNodes [i]);
 			i--;
 		}

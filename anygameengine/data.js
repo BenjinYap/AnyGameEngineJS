@@ -41,7 +41,7 @@ Game.fromSerialized = function (string) {
 		removeTextNodes (z);
 
 		for (var j = 0; j < z.childNodes.length; j++) {
-			zone.logicList.logics.push (createLogic (z.childNodes [i]));
+			zone.logicList.logics.push (createLogic (z.childNodes [j]));
 		}
 
 		game.zones.push (zone);
