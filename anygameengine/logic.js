@@ -50,6 +50,7 @@ function LogicText (id, text) {
 
 LogicText.inherits (Entity);
 
+//all remaining logic is executed after changing zones
 function LogicZoneChange (id, zoneID) {
 	this.constructor (id);
 	this.zoneID = zoneID === undefined ? '' : zoneID;
@@ -57,12 +58,13 @@ function LogicZoneChange (id, zoneID) {
 
 LogicZoneChange.inherits (Entity);
 
-function LogicPushIgnore (id, ignoreNumber) {
+//all logic past this point is dropped from the remaining logic when changing zones
+function LogicIgnorePoint (id, ignoreNumber) {
 	this.constructor (id);
 	this.ignoreNumber = ignoreNumber === undefined ? 0 : ignoreNumber;
 }
 
-LogicPushIgnore.inherits (Entity);
+LogicIgnorePoint.inherits (Entity);
 
 function Zone (id, name, logicList) {
 	this.constructor (id);
@@ -72,5 +74,3 @@ function Zone (id, name, logicList) {
 }
 
 Zone.inherits (Entity);
-
-//should add some kind of engine action queue and a general step function

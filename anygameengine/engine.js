@@ -70,6 +70,8 @@ function ZoneEngine (game, save) {
 			doLogicText.call (this, currentLogic);
 		} else if (currentLogic instanceof LogicZoneChange) {
 			doLogicZoneChange.call (this, currentLogic);
+		} else if (currentLogic instanceof LogicIgnorePoint) {
+			ignoreLogic.call (this);
 		}
 	};
 
@@ -81,10 +83,15 @@ function ZoneEngine (game, save) {
 		if (index < 0 || index > currentLogic.logics.length - 1) {
 			throw 'Option index out of bounds.';
 		}
-		
+
 		state = ZoneEngineState.LOGIC_ACTION;
 		this.save.remainingLogic.shift ();
 		this.save.remainingLogic.unshift.apply (this.save.remainingLogic, currentLogic.logics [index].logics);
+		this.step ();
+	}
+
+	function ignoreLogic () {
+		this.save.remainingLogic.shift ();
 		this.step ();
 	}
 
@@ -104,7 +111,12 @@ function ZoneEngine (game, save) {
 		this.save.remainingLogic.shift ();
 		var zone = this.game.zones.filter (function (z) { return z.id === zoneChange.zoneID; })[0];
 		
-		this.save.remainingLogic = [];
+		for (var i = 0; i < this.save.remainingLogic.length; i++) {
+			if (this.save.remainingLogic [i] instanceof LogicIgnorePoint) {
+				this.save.remainingLogic.splice (i, this.save.remainingLogic.length);
+				break;
+			}
+		}
 
 		for (var i = 0; i < zone.logicList.logics.length; i++) {
 			this.save.remainingLogic.push (zone.logicList.logics [i]);
