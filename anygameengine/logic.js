@@ -13,7 +13,6 @@ function LogicTreeNode (id) {
 
 LogicTreeNode.inherits (Entity);
 
-
 function LogicPointer (id, pointedID) {
 	var parentConstructor = this.constructor;
 	parentConstructor (id);
@@ -24,7 +23,7 @@ function LogicPointer (id, pointedID) {
 	this.constructor (id, pointedID);
 }
 
-LogicPointer.inherits (Entity);
+LogicPointer.inherits (LogicTreeNode);
 
 function LogicList (id, logics) {
 	var parentConstructor = this.constructor;
@@ -36,7 +35,7 @@ function LogicList (id, logics) {
 	this.constructor (id, logics);
 }
 
-LogicList.inherits (Entity);
+LogicList.inherits (LogicTreeNode);
 
 function LogicOptionList (id, logics, text) {
 	this.constructor (id, logics);
@@ -57,7 +56,7 @@ function LogicText (id, text) {
 	this.text = text === undefined ? '' : text;
 }
 
-LogicText.inherits (Entity);
+LogicText.inherits (LogicTreeNode);
 
 //all remaining logic is executed after changing zones
 function LogicZoneChange (id, zoneID) {
@@ -65,7 +64,7 @@ function LogicZoneChange (id, zoneID) {
 	this.zoneID = zoneID === undefined ? '' : zoneID;
 }
 
-LogicZoneChange.inherits (Entity);
+LogicZoneChange.inherits (LogicTreeNode);
 
 //all logic past this point is dropped from the remaining logic when changing zones
 function LogicIgnorePoint (id, ignoreNumber) {
@@ -73,7 +72,7 @@ function LogicIgnorePoint (id, ignoreNumber) {
 	this.ignoreNumber = ignoreNumber === undefined ? 0 : ignoreNumber;
 }
 
-LogicIgnorePoint.inherits (Entity);
+LogicIgnorePoint.inherits (LogicTreeNode);
 
 function Zone (id, name, logicList) {
 	this.constructor (id);
