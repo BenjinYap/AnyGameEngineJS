@@ -6,9 +6,14 @@ function Entity (id) {
 }
 
 function LogicTreeNode (id) {
+	var parentConstructor = this.constructor;
+	parentConstructor (id);
+	this.constructor = function (id) {
+		parentConstructor.apply (this, [id]);
+		this.nodes = [];
+		this.parent = null;
+	};
 	this.constructor (id);
-	this.nodes = [];
-	this.parent = null;
 }
 
 LogicTreeNode.inherits (Entity);
