@@ -5,6 +5,15 @@ function Entity (id) {
 	this.constructor (id);
 }
 
+function LogicTreeNode (id) {
+	this.constructor (id);
+	this.nodes = [];
+	this.parent = null;
+}
+
+LogicTreeNode.inherits (Entity);
+
+
 function LogicPointer (id, pointedID) {
 	var parentConstructor = this.constructor;
 	parentConstructor (id);
