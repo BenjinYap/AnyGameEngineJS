@@ -80,13 +80,13 @@ function ZoneEngine (game, save) {
 			throw 'Bad operation. Engine is in ' + state + ' state.';
 		}
 
-		if (index < 0 || index > currentLogic.logics.length - 1) {
+		if (index < 0 || index > currentLogic.nodes.length - 1) {
 			throw 'Option index out of bounds.';
 		}
 
 		state = ZoneEngineState.LOGIC_ACTION;
 		this.save.remainingLogic.shift ();
-		this.save.remainingLogic.unshift.apply (this.save.remainingLogic, currentLogic.logics [index].logics);
+		this.save.remainingLogic.unshift.apply (this.save.remainingLogic, currentLogic.nodes [index].nodes);
 		this.step ();
 	}
 
@@ -97,7 +97,7 @@ function ZoneEngine (game, save) {
 
 	function doLogicOptionList (optionList) {
 		state = ZoneEngineState.LOGIC_OPTION_LIST;
-		this.fireEvent (ZoneEngineEvent.LOGIC_OPTION_LIST, optionList.logics.map (function (option) {
+		this.fireEvent (ZoneEngineEvent.LOGIC_OPTION_LIST, optionList.nodes.map (function (option) {
 			return option.text;
 		}), optionList.text);
 	}
@@ -118,8 +118,8 @@ function ZoneEngine (game, save) {
 			}
 		}
 
-		for (var i = 0; i < zone.logicList.logics.length; i++) {
-			this.save.remainingLogic.push (zone.logicList.logics [i]);
+		for (var i = 0; i < zone.logicList.nodes.length; i++) {
+			this.save.remainingLogic.push (zone.logicList.nodes [i]);
 		}
 
 		this.fireEvent (ZoneEngineEvent.LOGIC_ZONE_CHANGE, zone.name);

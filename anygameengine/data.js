@@ -16,10 +16,10 @@ function Game () {
 		save.startingZoneID = this.startingZoneID;
 		var zone = this.zones.filter (function (z) { return z.id === this.startingZoneID; }, this)[0];
 		
-		for (var i = 0; i < zone.logicList.logics.length; i++) {
-			save.remainingLogic.push (zone.logicList.logics [i]);
+		for (var i = 0; i < zone.logicList.nodes.length; i++) {
+			save.remainingLogic.push (zone.logicList.nodes [i]);
 		}
-		
+
 		return save;
 	};
 }
@@ -41,15 +41,16 @@ Game.fromSerialized = function (string) {
 		removeTextNodes (z);
 
 		for (var j = 0; j < z.childNodes.length; j++) {
-			zone.logicList.logics.push (createLogic (z.childNodes [j]));
+			zone.logicList.nodes.push (createLogic (zone.logicList, z.childNodes [j]));
 		}
 
 		game.zones.push (zone);
 	}
 
-	function createLogic (node) {
+	function createLogic (parent, node) {
 		removeTextNodes (node);
 		var logic = new window [node.nodeName] ();
+		logic.parent = parent;
 		var attrs = node.attributes;
 
 		for (var i = 0; i < attrs.length; i++) {
@@ -57,10 +58,10 @@ Game.fromSerialized = function (string) {
 		}
 
 		if (/List/.test (node.nodeName) || node.nodeName === 'LogicOption') {
-			logic.logics = [];
+			logic.nodes = [];
 
 			for (var i = 0; i < node.childNodes.length; i++) {
-				logic.logics.push (createLogic (node.childNodes [i]));
+				logic.nodes.push (createLogic (logic, node.childNodes [i]));
 			}
 		}
 

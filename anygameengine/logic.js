@@ -35,7 +35,7 @@ function LogicList (id, logics) {
 	parentConstructor (id);
 	this.constructor = function (id, logics) {
 		parentConstructor.apply (this, [id]);
-		this.logics = logics === undefined ? [] : logics;
+		this.nodes = logics === undefined ? [] : logics;
 	};
 	this.constructor (id, logics);
 }
