@@ -2,6 +2,12 @@ Function.prototype.inherits = function (className) {
 	this.prototype = new className ();
 }
 
+function assertInstanceCall () {
+    if (this === window) {
+        throw 'Function can only be called within an instance scope.';
+    }
+}
+
 function Enum () {
 	for (var i = 0; i < arguments.length; i++) {
 		this [arguments [i]] = arguments [i];

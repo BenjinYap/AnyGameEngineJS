@@ -37,7 +37,12 @@ Game.fromSerialized = function (string) {
 
 	for (var i = 0; i < zonesNode.childNodes.length; i++) {
 		var z = zonesNode.childNodes [i];
-		var zone = new Zone (z.getAttribute ('id'), z.getAttribute ('name'), new LogicList ());
+		var zone = new Zone ();
+		zone.id = z.getAttribute ('id');
+		zone.name = z.getAttribute ('name');
+		zone.logicList = new LogicList ();
+		zone.logicList.parent = null;
+		zone.logicList.nodes = [];
 		removeTextNodes (z);
 
 		for (var j = 0; j < z.childNodes.length; j++) {
