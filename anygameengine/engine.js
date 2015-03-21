@@ -62,14 +62,14 @@ function ZoneEngine (game, save) {
 			throw 'Bad operation. Engine is in ' + state + ' state.';
 		}
 
-		currentLogic = this.save.remainingLogic [0];
+		var currentLogic = save.currentLogic;
 
 		if (currentLogic instanceof LogicOptionList) {
-			doLogicOptionList.call (this, currentLogic);
+			doLogicOptionList.call (this);
 		} else if (currentLogic instanceof LogicText) {
-			doLogicText.call (this, currentLogic);
+			doLogicText.call (this);
 		} else if (currentLogic instanceof LogicZoneChange) {
-			doLogicZoneChange.call (this, currentLogic);
+			doLogicZoneChange.call (this);
 		} else if (currentLogic instanceof LogicIgnorePoint) {
 			ignoreLogic.call (this);
 		}
@@ -80,13 +80,14 @@ function ZoneEngine (game, save) {
 			throw 'Bad operation. Engine is in ' + state + ' state.';
 		}
 
-		if (index < 0 || index > currentLogic.nodes.length - 1) {
+		if (index < 0 || index > this.save.currentLogic.nodes.length - 1) {
 			throw 'Option index out of bounds.';
 		}
 
 		state = ZoneEngineState.LOGIC_ACTION;
-		this.save.remainingLogic.shift ();
-		this.save.remainingLogic.unshift.apply (this.save.remainingLogic, currentLogic.nodes [index].nodes);
+		this.save.currentLogic = this.save.currentLogic.nodes [index].nodes [0];
+		//this.save.remainingLogic.shift ();
+		//this.save.remainingLogic.unshift.apply (this.save.remainingLogic, currentLogic.nodes [index].nodes);
 		this.step ();
 	}
 
@@ -95,19 +96,21 @@ function ZoneEngine (game, save) {
 		this.step ();
 	}
 
-	function doLogicOptionList (optionList) {
+	function doLogicOptionList () {
 		state = ZoneEngineState.LOGIC_OPTION_LIST;
-		this.fireEvent (ZoneEngineEvent.LOGIC_OPTION_LIST, optionList.nodes.map (function (option) {
+		this.fireEvent (ZoneEngineEvent.LOGIC_OPTION_LIST, this.save.currentLogic.nodes.map (function (option) {
 			return option.text;
-		}), optionList.text);
+		}), this.save.currentLogic.text);
 	}
 
-	function doLogicText (text) {
-		this.save.remainingLogic.shift ();
-		this.fireEvent (ZoneEngineEvent.LOGIC_TEXT, text.text);
+	function doLogicText () {
+		var text = this.save.currentLogic.text;
+		//this.save.currentLogic = this.save.currentLogic.next;
+		this.save.currentLogic.setSaveNextLogic (this.save);
+		this.fireEvent (ZoneEngineEvent.LOGIC_TEXT, text);
 	}
 
-	function doLogicZoneChange (zoneChange) {
+	function doLogicZoneChange () {
 		this.save.remainingLogic.shift ();
 		var zone = this.game.zones.filter (function (z) { return z.id === zoneChange.zoneID; })[0];
 		

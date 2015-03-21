@@ -25,6 +25,8 @@ function LogicTreeNode () {
 		}
 
 		clone.parent = parent;
+		clone.prev = null;
+		clone.next = null;
 		clone.nodes = [];
 
 		for (var i = 0; i < this.nodes.length; i++) {
@@ -48,6 +50,23 @@ function LogicPointer () {
 
 LogicPointer.inherits (LogicTreeNode);
 
+function LogicNonAltering () {
+	this.setSaveNextLogic = function (save) {
+		if (this.next === null) {
+			save.currentLogic = save.currentLogic.parent;
+
+			if (save.currentLogic instanceof LogicOption) {
+				save.currentLogic = save.currentLogic.parent;
+			}
+
+		}
+		console.log (save.currentLogic);
+		save.currentLogic = save.currentLogic.next;
+	}
+}
+
+LogicNonAltering.inherits (LogicTreeNode);
+
 function LogicList () {
 	this.derivedClass = 'LogicList';
 }
@@ -70,7 +89,7 @@ function LogicText () {
 	this.derivedClass = 'LogicText';
 }
 
-LogicText.inherits (LogicTreeNode);
+LogicText.inherits (LogicNonAltering);
 
 //all remaining logic is executed after changing zones
 function LogicZoneChange () {

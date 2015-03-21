@@ -16,7 +16,7 @@ function Game () {
 		save.startingZoneID = this.startingZoneID;
 		save.currentZoneID = this.startingZoneID;
 		var zone = this.zones.filter (function (z) { return z.id === this.startingZoneID; }, this)[0];
-		save.currentLogic = zone.logicList.clone (null);
+		save.currentLogic = zone.logicList.clone (null).nodes [0];
 		return save;
 	};
 }
@@ -70,7 +70,6 @@ Game.fromSerialized = function (string) {
 		}
 
 		if (/List/.test (node.nodeName) || node.nodeName === 'LogicOption') {
-
 			for (var i = 0; i < node.childNodes.length; i++) {
 				logic.nodes.push (createLogic (logic, node.childNodes [i]));
 
