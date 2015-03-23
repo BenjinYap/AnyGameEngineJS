@@ -105,25 +105,36 @@ function ZoneEngine (game, save) {
 
 	function doLogicText () {
 		var text = this.save.currentLogic.text;
-		//this.save.currentLogic = this.save.currentLogic.next;
-		this.save.currentLogic.setSaveNextLogic (this.save);
+		this.save.currentLogic = this.save.currentLogic.getNextLogic ();
 		this.fireEvent (ZoneEngineEvent.LOGIC_TEXT, text);
 	}
 
 	function doLogicZoneChange () {
-		this.save.remainingLogic.shift ();
-		var zone = this.game.zones.filter (function (z) { return z.id === zoneChange.zoneID; })[0];
-		
-		for (var i = 0; i < this.save.remainingLogic.length; i++) {
-			if (this.save.remainingLogic [i] instanceof LogicIgnorePoint) {
-				this.save.remainingLogic.splice (i, this.save.remainingLogic.length);
+		var newZoneID = this.save.currentLogic.zoneID;
+
+		var newCurrentLogic = this.save.currentLogic.getNextLogic ().clone (null);
+		var lastLogic = newCurrentLogic;
+		var logic = this.save.currentLogic.getNextLogic ().getNextLogic ();
+
+		while (true) {
+			lastLogic.next = logic.clone (null);
+			lastLogic.next.prev = lastLogic;
+			lastLogic = lastLogic.next;
+
+			if (logic.getNextLogic () !== null) {
+				logic = logic.getNextLogic ();
+			} else {
+				logic = lastLogic;
 				break;
 			}
 		}
 
-		for (var i = 0; i < zone.logicList.nodes.length; i++) {
-			this.save.remainingLogic.push (zone.logicList.nodes [i]);
-		}
+		var zone = this.game.zones.filter (function (z) { return z.id === newZoneID; })[0];
+		logic.next = zone.logicList.clone (null).nodes [0];
+		logic.next.prev = logic;
+
+		root = newCurrentLogic;
+		this.save.currentLogic = newCurrentLogic;
 
 		this.fireEvent (ZoneEngineEvent.LOGIC_ZONE_CHANGE, zone.name);
 	}

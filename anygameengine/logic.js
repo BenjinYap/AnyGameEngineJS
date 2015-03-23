@@ -40,6 +40,36 @@ function LogicTreeNode () {
 
 		return clone;
 	};
+
+	this.setSaveNextLogic = function (save) {
+		if (this.next === null) {
+			save.currentLogic = this.getParentNextSibling ();
+		} else {
+			save.currentLogic = save.currentLogic.next;
+		}
+	}
+
+	this.getNextLogic = function () {
+		if (this.next === null) {
+			if (this.parent instanceof LogicOption) {
+				return this.parent.parent.next;
+			} else {
+				return this.parent === null ? null : this.parent.next;
+			}
+		} else {
+			return this.next;
+		}
+	}
+
+	this.getParentNextSibling = function () {
+		var parent = this.parent;
+
+		if (parent instanceof LogicOption) {
+			parent = parent.parent;
+		}
+
+		return parent === null ? null : parent.next;
+	}
 }
 
 LogicTreeNode.inherits (Entity);
@@ -51,18 +81,7 @@ function LogicPointer () {
 LogicPointer.inherits (LogicTreeNode);
 
 function LogicNonAltering () {
-	this.setSaveNextLogic = function (save) {
-		if (this.next === null) {
-			save.currentLogic = save.currentLogic.parent;
-
-			if (save.currentLogic instanceof LogicOption) {
-				save.currentLogic = save.currentLogic.parent;
-			}
-
-		}
-		console.log (save.currentLogic);
-		save.currentLogic = save.currentLogic.next;
-	}
+	
 }
 
 LogicNonAltering.inherits (LogicTreeNode);
