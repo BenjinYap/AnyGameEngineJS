@@ -92,7 +92,7 @@ function ZoneEngine (game, save) {
 	}
 
 	function ignoreLogic () {
-		this.save.remainingLogic.shift ();
+		this.save.currentLogic = this.save.currentLogic.getNextLogic ();
 		this.step ();
 	}
 
