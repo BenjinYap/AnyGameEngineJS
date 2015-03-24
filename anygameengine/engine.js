@@ -117,6 +117,11 @@ function ZoneEngine (game, save) {
 		var logic = this.save.currentLogic.getNextLogic ().getNextLogic ();
 
 		while (true) {
+			if (logic instanceof LogicIgnorePoint) {
+				logic = lastLogic;
+				break;
+			}
+
 			lastLogic.next = logic.clone (null);
 			lastLogic.next.prev = lastLogic;
 			lastLogic = lastLogic.next;
