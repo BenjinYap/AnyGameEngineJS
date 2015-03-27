@@ -92,6 +92,7 @@ function ZoneEngine (game, save) {
 	}
 
 	function ignoreLogic () {
+		console.log ('ignored');
 		this.save.currentLogic = this.save.currentLogic.getNextLogic ();
 		this.step ();
 	}
@@ -110,36 +111,54 @@ function ZoneEngine (game, save) {
 	}
 
 	function doLogicZoneChange () {
+		//get the zone to change to
 		var newZoneID = this.save.currentLogic.zoneID;
+		var zone = this.game.zones.filter (function (z) { return z.id === newZoneID; })[0];
 
-		var newCurrentLogic = this.save.currentLogic.getNextLogic ().clone (null);
-		var lastLogic = newCurrentLogic;
-		var logic = this.save.currentLogic.getNextLogic ().getNextLogic ();
+		//get the logic after the logiczonechange
+		var nextLogic = this.save.currentLogic.getNextLogic ();
 
-		while (true) {
-			if (logic instanceof LogicIgnorePoint) {
-				logic = lastLogic;
-				break;
+		//if there is no logic after the logiczonechange or the next logic is an ignore
+		if (nextLogic === null || nextLogic instanceof LogicIgnorePoint) {
+			//set the new current logic to the first logic of the new zone
+			this.save.currentLogic = zone.logicList.clone (null).nodes [0];
+		} else {  //if there is logic after the logiczonechange
+			//the first logic in the new chain
+			var newCurrentLogic = nextLogic.clone (null);
+
+			//reference to the previous logic in the new chain
+			var prevLogicNew = newCurrentLogic;
+
+			//reference to the previous logic in the old chain
+			var prevLogic = nextLogic;
+
+			while (true) {
+				//get the next logic in the old chain
+				var nextLogic = prevLogic.getNextLogic ();
+
+				//stop if there's nothing or it's an ignore
+				if (nextLogic === null || nextLogic instanceof LogicIgnorePoint) {
+					break;
+				}
+
+				//clone the old chain into the new chain
+				prevLogicNew.next = nextLogic.clone (null);
+				prevLogicNew.next.prev = prevLogicNew;
+
+				//reset the old and new references
+				prevLogicNew = prevLogicNew.next;
+				prevLogic = nextLogic;
 			}
 
-			lastLogic.next = logic.clone (null);
-			lastLogic.next.prev = lastLogic;
-			lastLogic = lastLogic.next;
+			//clone the new zone into the new chain
+			prevLogicNew.next = zone.logicList.clone (null).nodes [0];
+			prevLogicNew.next.prev = prevLogicNew;
 
-			if (logic.getNextLogic () !== null) {
-				logic = logic.getNextLogic ();
-			} else {
-				logic = lastLogic;
-				break;
-			}
+			//finally set the new logic
+			this.save.currentLogic = newCurrentLogic;
 		}
 
-		var zone = this.game.zones.filter (function (z) { return z.id === newZoneID; })[0];
-		logic.next = zone.logicList.clone (null).nodes [0];
-		logic.next.prev = logic;
-
-		root = newCurrentLogic;
-		this.save.currentLogic = newCurrentLogic;
+		root = this.save.currentLogic;
 
 		this.fireEvent (ZoneEngineEvent.LOGIC_ZONE_CHANGE, zone.name);
 	}
