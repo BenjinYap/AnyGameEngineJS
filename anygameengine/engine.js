@@ -66,12 +66,14 @@ function ZoneEngine (game, save) {
 
 		if (currentLogic instanceof LogicOptionList) {
 			doLogicOptionList.call (this);
+		} else if (currentLogic instanceof LogicIgnorePoint) {
+			doLogicIgnorePoint.call (this);
+		} else if (currentLogic instanceof LogicBackUpOptionList) {
+			doLogicBackUpOptionList.call (this);
 		} else if (currentLogic instanceof LogicText) {
 			doLogicText.call (this);
 		} else if (currentLogic instanceof LogicZoneChange) {
 			doLogicZoneChange.call (this);
-		} else if (currentLogic instanceof LogicIgnorePoint) {
-			ignoreLogic.call (this);
 		}
 	};
 
@@ -91,7 +93,7 @@ function ZoneEngine (game, save) {
 		this.step ();
 	}
 
-	function ignoreLogic () {
+	function doLogicIgnorePoint () {
 		console.log ('ignored');
 		this.save.currentLogic = this.save.currentLogic.getNextLogic ();
 		this.step ();
@@ -102,6 +104,28 @@ function ZoneEngine (game, save) {
 		this.fireEvent (ZoneEngineEvent.LOGIC_OPTION_LIST, this.save.currentLogic.nodes.map (function (option) {
 			return option.text;
 		}), this.save.currentLogic.text);
+	}
+
+	function doLogicBackUpOptionList () {
+		var times = this.save.currentLogic.times;
+		var logic = this.save.currentLogic;
+
+		for (var i = 0; i < times; i++) {
+			while (true) {
+				if (logic.parent === null) {
+					throw 'bad happened';
+				}
+
+				logic = logic.parent;
+
+				if (logic instanceof LogicOptionList) {
+					break;
+				}
+			}
+		}
+
+		this.save.currentLogic = logic;
+		this.step ();
 	}
 
 	function doLogicText () {

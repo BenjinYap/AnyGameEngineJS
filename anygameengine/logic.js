@@ -74,17 +74,14 @@ function LogicTreeNode () {
 
 LogicTreeNode.inherits (Entity);
 
+//----------------------------------
+//FLOW & STRUCTURE
+//----------------------------------
 function LogicPointer () {
 	this.derivedClass = 'LogicPointer';
 }
 
 LogicPointer.inherits (LogicTreeNode);
-
-function LogicNonAltering () {
-	
-}
-
-LogicNonAltering.inherits (LogicTreeNode);
 
 function LogicList () {
 	this.derivedClass = 'LogicList';
@@ -104,11 +101,26 @@ function LogicOption () {
 
 LogicOption.inherits (LogicList);
 
+//all logic past this point is dropped from the remaining logic when changing zones
+function LogicIgnorePoint () {
+	this.derivedClass = 'LogicIgnorePoint';
+}
+
+LogicIgnorePoint.inherits (LogicTreeNode);
+
+function LogicBackUpOptionList () {
+	this.derivedClass = 'LogicBackUpOptionList';
+}
+
+LogicBackUpOptionList.inherits (LogicTreeNode);
+//----------------------------------
+//ACTIONS
+//----------------------------------
 function LogicText () {
 	this.derivedClass = 'LogicText';
 }
 
-LogicText.inherits (LogicNonAltering);
+LogicText.inherits (LogicTreeNode);
 
 //all remaining logic is executed after changing zones
 function LogicZoneChange () {
@@ -116,13 +128,6 @@ function LogicZoneChange () {
 }
 
 LogicZoneChange.inherits (LogicTreeNode);
-
-//all logic past this point is dropped from the remaining logic when changing zones
-function LogicIgnorePoint () {
-	this.derivedClass = 'LogicIgnorePoint';
-}
-
-LogicIgnorePoint.inherits (LogicTreeNode);
 
 function Zone (id, name, logicList) {
 	this.derivedClass = 'Zone';
