@@ -69,7 +69,7 @@ Game.fromSerialized = function (string) {
 			logic [attrs [i].name] = attrs [i].value;
 		}
 
-		if (/List/.test (node.nodeName) || node.nodeName === 'LogicOption') {
+		//if (/List/.test (node.nodeName) || node.nodeName === 'LogicOption') {
 			for (var i = 0; i < node.childNodes.length; i++) {
 				logic.nodes.push (createLogic (logic, node.childNodes [i]));
 
@@ -78,7 +78,7 @@ Game.fromSerialized = function (string) {
 					logic.nodes [i - 1].next = logic.nodes [i];
 				}
 			}
-		}
+		//}
 
 		return logic;
 	}

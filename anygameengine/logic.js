@@ -41,17 +41,24 @@ function LogicTreeNode () {
 		return clone;
 	};
 
-	this.setSaveNextLogic = function (save) {
+	/*this.setSaveNextLogic = function (save) {
 		if (this.next === null) {
 			save.currentLogic = this.getParentNextSibling ();
 		} else {
 			save.currentLogic = save.currentLogic.next;
 		}
-	}
+	}*/
 
 	this.getNextLogic = function () {
 		if (this.next === null) {
-			if (this.parent instanceof LogicOption) {
+			if (this.parent instanceof LogicLoop) {
+				if (this.parent.count < this.parent.repeat) {
+					this.parent.count++;
+					return this.parent.nodes [0];
+				} else {
+					return this.parent.getNextLogic ();
+				}
+			} else if (this.parent instanceof LogicOption) {
 				return this.parent.parent.next;
 			} else {
 				return this.parent === null ? null : this.parent.next;
@@ -61,7 +68,7 @@ function LogicTreeNode () {
 		}
 	}
 
-	this.getParentNextSibling = function () {
+	/*this.getParentNextSibling = function () {
 		var parent = this.parent;
 
 		if (parent instanceof LogicOption) {
@@ -69,7 +76,7 @@ function LogicTreeNode () {
 		}
 
 		return parent === null ? null : parent.next;
-	}
+	}*/
 }
 
 LogicTreeNode.inherits (Entity);
@@ -113,6 +120,12 @@ function LogicBackUpOptionList () {
 }
 
 LogicBackUpOptionList.inherits (LogicTreeNode);
+
+function LogicLoop () {
+	this.derivedClass = 'LogicLoop';
+}
+
+LogicLoop.inherits (LogicTreeNode);
 //----------------------------------
 //ACTIONS
 //----------------------------------

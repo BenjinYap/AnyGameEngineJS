@@ -64,12 +64,17 @@ function ZoneEngine (game, save) {
 
 		var currentLogic = save.currentLogic;
 
+		//logic flows
 		if (currentLogic instanceof LogicOptionList) {
 			doLogicOptionList.call (this);
 		} else if (currentLogic instanceof LogicIgnorePoint) {
 			doLogicIgnorePoint.call (this);
 		} else if (currentLogic instanceof LogicBackUpOptionList) {
 			doLogicBackUpOptionList.call (this);
+		} else if (currentLogic instanceof LogicLoop) {
+			doLogicLoop.call (this);
+
+		//logic actions
 		} else if (currentLogic instanceof LogicText) {
 			doLogicText.call (this);
 		} else if (currentLogic instanceof LogicZoneChange) {
@@ -125,6 +130,13 @@ function ZoneEngine (game, save) {
 		}
 
 		this.save.currentLogic = logic;
+		this.step ();
+	}
+
+	function doLogicLoop () {
+		var repeat = this.save.currentLogic.repeat;
+		this.save.currentLogic.count = 1;
+		this.save.currentLogic = this.save.currentLogic.nodes [0];
 		this.step ();
 	}
 
