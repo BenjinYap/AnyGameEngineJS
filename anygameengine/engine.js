@@ -174,7 +174,23 @@ function ZoneEngine (game, save) {
 	}
 
 	function doLogicLoopBreak () {
+		var logic = this.save.currentLogic;
 
+		while (true) {
+			if (logic.parent === null) {
+				throw 'reached the top without finding a loop';
+			} else {
+				if (logic.parent instanceof LogicLoop) {
+					logic.parent.count = 0;
+					this.save.currentLogic = logic.parent.getNextLogic ();
+					break;
+				}
+
+				logic = logic.parent;
+			}
+		}
+
+		this.step ();
 	}
 
 	function doLogicText () {
