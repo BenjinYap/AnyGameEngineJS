@@ -155,41 +155,14 @@ function ZoneEngine (game, save) {
 	}
 
 	function doLogicLoopContinue () {
-		var logic = this.save.currentLogic;
-
-		while (true) {
-			if (logic.parent === null) {
-				throw 'reached the top without finding a loop';
-			} else {
-				if (logic.parent instanceof LogicLoop) {
-					this.save.currentLogic = logic.parent;
-					break;
-				}
-
-				logic = logic.parent;
-			}
-		}
-
+		this.save.currentLogic = this.save.currentLogic.getParentByType (LogicLoop);
 		this.step ();
 	}
 
 	function doLogicLoopBreak () {
-		var logic = this.save.currentLogic;
-
-		while (true) {
-			if (logic.parent === null) {
-				throw 'reached the top without finding a loop';
-			} else {
-				if (logic.parent instanceof LogicLoop) {
-					logic.parent.count = 0;
-					this.save.currentLogic = logic.parent.getNextLogic ();
-					break;
-				}
-
-				logic = logic.parent;
-			}
-		}
-
+		var loop = this.save.currentLogic.getParentByType (LogicLoop);
+		loop.count = 0;
+		this.save.currentLogic = loop.getNextLogic ();
 		this.step ();
 	}
 

@@ -63,6 +63,22 @@ function LogicTreeNode () {
 		}
 	}
 
+	this.getParentByType = function (type) {
+		var logic = this;
+
+		while (true) {
+			if (logic.parent === null) {
+				throw 'reached top without finding ' + type;
+			} else {
+				if (logic.parent instanceof type) {
+					return logic.parent;
+				}
+
+				logic = logic.parent;
+			}
+		}
+	};
+
 	/*this.getParentNextSibling = function () {
 		var parent = this.parent;
 
