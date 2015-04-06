@@ -147,6 +147,7 @@ function ZoneEngine (game, save) {
 			loop.count++;
 			this.save.currentLogic = loop.nodes [0];
 		} else {
+			loop.count = 0;
 			this.save.currentLogic = loop.getNextLogic ();
 		}
 
