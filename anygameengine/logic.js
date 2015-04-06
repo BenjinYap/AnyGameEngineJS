@@ -88,6 +88,10 @@ function LogicTreeNode () {
 
 		return parent === null ? null : parent.next;
 	}*/
+
+	this.verify = function () {
+		//always verify
+	}
 }
 
 LogicTreeNode.inherits (Entity);
@@ -109,6 +113,10 @@ LogicList.inherits (LogicTreeNode);
 
 function LogicOptionList () {
 	this.derivedClass = 'LogicOptionList';
+
+	this.verify = function () {
+		return false;
+	}
 }
 
 LogicOptionList.inherits (LogicList);

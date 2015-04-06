@@ -80,6 +80,7 @@ Game.fromSerialized = function (string) {
 			}
 		//}
 
+		logic.verify ();
 		return logic;
 	}
 
