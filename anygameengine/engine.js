@@ -159,16 +159,17 @@ function ZoneEngine (game, save) {
 		while (true) {
 			if (logic.parent === null) {
 				throw 'reached the top without finding a loop';
-			} else if (logic.parent instanceof LogicLoop) {
-				if (logic.parent.count < this.parent.repeat) {
-
-				} else {
-
-				}
 			} else {
+				if (logic.parent instanceof LogicLoop) {
+					this.save.currentLogic = logic.parent;
+					break;
+				}
 
+				logic = logic.parent;
 			}
 		}
+
+		this.step ();
 	}
 
 	function doLogicLoopBreak () {
