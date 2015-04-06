@@ -73,9 +73,13 @@ function ZoneEngine (game, save) {
 			doLogicBackUpOptionList.call (this);
 		} else if (currentLogic instanceof LogicLoop) {
 			doLogicLoop.call (this);
-
+		} else if (currentLogic instanceof LogicLoopContinue) {
+			doLogicLoopContinue.call (this);
+		} else if (currentLogic instanceof LogicLoopBreak) {
+			doLogicLoopBreak.call (this);
+		}
 		//logic actions
-		} else if (currentLogic instanceof LogicText) {
+		  else if (currentLogic instanceof LogicText) {
 			doLogicText.call (this);
 		} else if (currentLogic instanceof LogicZoneChange) {
 			doLogicZoneChange.call (this);
@@ -134,10 +138,41 @@ function ZoneEngine (game, save) {
 	}
 
 	function doLogicLoop () {
-		var repeat = this.save.currentLogic.repeat;
-		this.save.currentLogic.count = 1;
-		this.save.currentLogic = this.save.currentLogic.nodes [0];
+		var loop = this.save.currentLogic;
+		var repeat = loop.repeat;
+		var count = loop.count === undefined ? 0 : loop.count;
+		loop.count = count;
+
+		if (count < repeat) {
+			loop.count++;
+			this.save.currentLogic = loop.nodes [0];
+		} else {
+			this.save.currentLogic = loop.getNextLogic ();
+		}
+
 		this.step ();
+	}
+
+	function doLogicLoopContinue () {
+		var logic = this.save.currentLogic;
+
+		while (true) {
+			if (logic.parent === null) {
+				throw 'reached the top without finding a loop';
+			} else if (logic.parent instanceof LogicLoop) {
+				if (logic.parent.count < this.parent.repeat) {
+
+				} else {
+
+				}
+			} else {
+
+			}
+		}
+	}
+
+	function doLogicLoopBreak () {
+
 	}
 
 	function doLogicText () {

@@ -52,12 +52,7 @@ function LogicTreeNode () {
 	this.getNextLogic = function () {
 		if (this.next === null) {
 			if (this.parent instanceof LogicLoop) {
-				if (this.parent.count < this.parent.repeat) {
-					this.parent.count++;
-					return this.parent.nodes [0];
-				} else {
-					return this.parent.getNextLogic ();
-				}
+				return this.parent;
 			} else if (this.parent instanceof LogicOption) {
 				return this.parent.parent.next;
 			} else {
@@ -125,7 +120,19 @@ function LogicLoop () {
 	this.derivedClass = 'LogicLoop';
 }
 
-LogicLoop.inherits (LogicTreeNode);
+LogicLoop.inherits (LogicList);
+
+function LogicLoopContinue () {
+	this.derivedClass = 'LogicLoopContinue';
+}
+
+LogicLoopContinue.inherits (LogicTreeNode);
+
+function LogicLoopBreak () {
+	this.derivedClass = 'LogicLoopBreak';
+}
+
+LogicLoopBreak.inherits (LogicTreeNode);
 //----------------------------------
 //ACTIONS
 //----------------------------------
