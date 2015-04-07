@@ -42,3 +42,17 @@ function removeTextNodes (node) {
 		}
 	}
 }
+
+var Types = {};
+
+Types.stringToBoolean = function (value) {
+	value = value.toLowerCase ();
+
+	if (value === 'true') {
+		return true;
+	} else if (value === 'false') {
+		return false;
+	}
+
+	throw value + ' is not a valid boolean';
+}

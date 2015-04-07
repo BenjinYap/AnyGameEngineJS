@@ -1,5 +1,7 @@
 function Entity () {
-	
+	this.verify = function () {
+		//always verify
+	}
 }
 
 function LogicTreeNode () {
@@ -88,10 +90,6 @@ function LogicTreeNode () {
 
 		return parent === null ? null : parent.next;
 	}*/
-
-	this.verify = function () {
-		//always verify
-	}
 }
 
 LogicTreeNode.inherits (Entity);
@@ -157,6 +155,15 @@ function LogicLoopBreak () {
 }
 
 LogicLoopBreak.inherits (LogicTreeNode);
+
+function LogicCondition () {
+
+	this.verify = function () {
+
+	}
+}
+
+LogicCondition.inherits (LogicList);
 //----------------------------------
 //ACTIONS
 //----------------------------------
@@ -172,9 +179,45 @@ function LogicZoneChange () {
 }
 
 LogicZoneChange.inherits (LogicTreeNode);
-
+//----------------------------------
+//OTHER THINGS
+//----------------------------------
 function Zone (id, name, logicList) {
 	this.derivedClass = 'Zone';
 }
 
 Zone.inherits (Entity);
+
+function CustomVar (name, type) {
+	this.name = name;
+	this.type = type;
+
+	this.verify = function () {
+		var validType = false;
+
+		for (var prop in CustomVarType) {
+			if (this.type === prop) {
+				validType = true;
+				break;
+			}
+		}
+
+		if (validType) {
+			if (this.type === CustomVarType.INTEGER) {
+
+			} else if (this.type === CustomVarType.DECIMAL) {
+
+			} else if (this.type === CustomVarType.STRING) {
+
+			}
+		} else {
+			throw 'Unknown type ' + this.type + ' for CustomVar';
+		}
+	};
+}
+
+var CustomVarType = new Enum (
+	'INTEGER',
+	'DECIMAL',
+	'STRING'
+);
