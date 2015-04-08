@@ -43,6 +43,8 @@ Game.fromSerialized = function (string) {
 		var zonesNode = gameNode.getElementsByTagName ('Zones')[0];
 		removeTextNodes (zonesNode);
 
+		var existingZones = {};
+
 		for (var i = 0; i < zonesNode.childNodes.length; i++) {
 			var z = zonesNode.childNodes [i];
 			var zone = new Zone ();
@@ -52,6 +54,12 @@ Game.fromSerialized = function (string) {
 			zone.logicList.parent = null;
 			zone.logicList.nodes = [];
 			removeTextNodes (z);
+
+			if (existingZones [zone.id] !== undefined) {
+				throw 'Zone ' + zone.id + ' already exists';
+			}
+
+			existingZones [zone.id] = 1;
 
 			for (var j = 0; j < z.childNodes.length; j++) {
 				zone.logicList.nodes.push (createLogic (zone.logicList, z.childNodes [j]));
