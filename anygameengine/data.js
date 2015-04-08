@@ -100,9 +100,17 @@ Game.fromSerialized = function (string) {
 		var customVarsNode = gameNode.getElementsByTagName ('CustomVars')[0];
 		removeTextNodes (customVarsNode);
 
+		var existingVars = {};
+
 		for (var i = 0; i < customVarsNode.childNodes.length; i++) {
 			var v = customVarsNode.childNodes [i];
 			var customVar = new window [v.nodeName] (v.getAttribute ('name'), v.getAttribute ('type'));
+
+			if (existingVars [customVar.name] !== undefined) {
+				throw 'CustomVar ' + customVar.name + ' already exists';
+			}
+
+			existingVars[customVar.name] = 1;
 
 			if (customVar instanceof CustomVarArray) {
 				var temp = v.getAttribute ('values');
