@@ -102,10 +102,11 @@ Game.fromSerialized = function (string) {
 
 		for (var i = 0; i < customVarsNode.childNodes.length; i++) {
 			var v = customVarsNode.childNodes [i];
-			var customVar = new CustomVar (v.getAttribute ('name'), v.getAttribute ('type'));
+			var customVar = new window [v.nodeName] (v.getAttribute ('name'), v.getAttribute ('type'));
 
-			if (customVar.isArray) {
-
+			if (customVar instanceof CustomVarArray) {
+				var temp = v.getAttribute ('values');
+				customVar.values = temp.length <= 0 ? [] : temp.split (',');
 			} else {
 				customVar.value = v.getAttribute ('value');
 			}

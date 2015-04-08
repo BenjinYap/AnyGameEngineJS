@@ -192,29 +192,47 @@ function CustomVar (name, type) {
 	this.name = name;
 	this.type = type;
 
-	this.verify = function () {
-		var validType = false;
-
+	this.verifyType = function () {
 		for (var prop in CustomVarType) {
 			if (this.type === prop) {
-				validType = true;
-				break;
+				return;
 			}
 		}
 
-		if (validType) {
-			if (this.type === CustomVarType.INTEGER) {
+		throw 'Unknown type ' + this.type + ' for CustomVar';
+	};
 
-			} else if (this.type === CustomVarType.DECIMAL) {
+	this.verify = function () {
+		this.verifyType ();
 
-			} else if (this.type === CustomVarType.STRING) {
-
-			}
-		} else {
-			throw 'Unknown type ' + this.type + ' for CustomVar';
+		if (this.type === CustomVarType.INTEGER) {
+			this.value = Types.parseInteger (this.value);
+		} else if (this.type === CustomVarType.DECIMAL) {
+			this.value = Types.parseDecimal (this.value);
 		}
 	};
 }
+
+function CustomVarArray (name, type) {
+	this.name = name;
+	this.type = type;
+
+	this.verify = function () {
+		this.verifyType ();
+
+		if (this.type === CustomVarType.INTEGER) {
+			for (var i = 0; i < this.values.length; i++) {
+				this.values [i] = Types.parseInteger (this.values [i]);
+			}
+		} else if (this.type === CustomVarType.DECIMAL) {
+			for (var i = 0; i < this.values.length; i++) {
+				this.values [i] = Types.parseDecimal (this.values [i]);
+			}
+		}
+	};
+}
+
+CustomVarArray.inherits (CustomVar);
 
 var CustomVarType = new Enum (
 	'INTEGER',

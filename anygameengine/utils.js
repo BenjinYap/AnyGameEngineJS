@@ -56,3 +56,27 @@ Types.stringToBoolean = function (value) {
 
 	throw value + ' is not a valid boolean';
 }
+
+Types.isInteger = function (value) {
+	return /^[-+]?\d+$/.test (value);
+}
+
+Types.isDecimal = function (value) {
+	return /^[-+]?\d+(\.\d+)?$/.test (value);
+}
+
+Types.parseInteger = function (value) {
+	if (Types.isInteger (value)) {
+		return parseInt (value);
+	} else {
+		throw value + ' is not an integer';
+	}
+}
+
+Types.parseDecimal = function (value) {
+	if (Types.isDecimal (value)) {
+		return parseFloat (value);
+	} else {
+		throw value + ' is not an decimal';
+	}
+}
